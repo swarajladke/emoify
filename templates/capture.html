@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emoify - Capture</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        #video {
+            width: 100%;
+            border-radius: 12px;
+            transform: scaleX(-1);
+            background: #000;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .capture-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(99, 102, 241, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="nav-header">
+        <a href="/" class="nav-logo">Emoify</a>
+    </header>
+
+    <div class="container animate-in">
+        <div class="text-center mb-8">
+            <p class="text-muted"
+                style="letter-spacing: 0.2em; font-weight: 700; text-transform: uppercase; font-size: 0.75rem;">Step 3
+            </p>
+            <h1>Analyze Expression</h1>
+            <p class="text-muted">Look into the camera and click capture when ready.</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="capture-container">
+                <div id="loading" class="loading-overlay">
+                    <div class="spinner mb-4"></div>
+                    <p style="font-weight: 600;">Analyzing your vibe...</p>
+                </div>
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" width="640" height="480"></canvas>
+            </div>
+
+            <div id="error-msg" class="text-danger mt-4" style="display: none; font-size: 0.875rem; font-weight: 600;">
+            </div>
+
+            <div class="mt-8 grid gap-4">
+                <button id="capture-btn" class="btn-primary" style="width: 100%;">Capture & Analyze</button>
+                <a href="/index" class="btn-outline"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const loading = document.getElementById('loading');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Access webcam
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Camera access error:", err);
+                errorMsg.innerText = "Error: Could not access webcam. Please ensure permissions are granted.";
+                errorMsg.style.display = 'block';
+                captureBtn.disabled = true;
+            });
+
+        captureBtn.addEventListener('click', () => {
+            // Show loading state
+            loading.style.display = 'flex';
+            errorMsg.style.display = 'none';
+            captureBtn.disabled = true;
+
+            // Draw current frame to canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to base64
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+
+            // Send to server
+            fetch('/process_frame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.ask_preference) {
+                            // Create a temporary form to POST to ask_music_preference
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '/ask_music_preference_post'; // Helper for internal redirect
+
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'emotion';
+                            input.value = data.emotion;
+                            form.appendChild(input);
+
+                            document.body.appendChild(form);
+                            // form.submit(); // Actually, let's just use window.location if we change backend to GET
+                            // For simplicity, let's just redirect with params if we can, 
+                            // but ask_music_preference expects POST. 
+                            // I'll add a helper route in app.py
+                            window.location.href = `/results?emotion=${data.emotion}&link=${encodeURIComponent(data.link)}&ask=${data.ask_preference}`;
+                        } else {
+                            window.location.href = `/results?emotion=${data.emotion}&link=${encodeURIComponent(data.link)}&ask=false`;
+                        }
+                    } else {
+                        throw new Error(data.error || "Analysis failed");
+                    }
+                })
+                .catch(err => {
+                    console.error("Analysis error:", err);
+                    errorMsg.innerText = err.message;
+                    errorMsg.style.display = 'block';
+                    loading.style.display = 'none';
+                    captureBtn.disabled = false;
+                });
+        });
+    </script>
+</body>
+
+</html>

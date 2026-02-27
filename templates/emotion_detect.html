@@ -23,7 +23,9 @@
 		<p class="text-muted"
 			style="letter-spacing: 0.2em; font-weight: 700; text-transform: uppercase; font-size: 0.75rem;">Analysis
 			Complete</p>
-		<div class="emotion-result">You look {{data}}</div>
+		<h1 class="emotion-result"
+			style="font-size: 3rem; margin-bottom: 2rem; background: linear-gradient(to right, #6366f1, #a855f7); -webkit-background-clip: text; color: transparent;">
+			{{data.capitalize()}}</h1>
 
 		<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
 			<img src="{{url_for('static', filename='face.jpg')}}" class="camera-preview" alt="Captured Face">

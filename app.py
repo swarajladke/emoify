@@ -131,18 +131,30 @@ def choose_singer():
 @app.route('/emotion_detect', methods=['POST'])
 def emotion_detect():
     info['singer'] = request.form['singer']
-    cap = cv2.VideoCapture(0)
-    found = False
-    roi = None
-    while not found:
-        ret, frame = cap.read()
-        if not ret:
-            break
+    # Instead of opening the camera on the server, we render a capture page for the client
+    return render_template('capture.html', singer=info['singer'])
+
+import base64
+
+@app.route('/process_frame', methods=['POST'])
+def process_frame():
+    try:
+        data = request.get_json()
+        image_data = data.get('image')
+        if not image_data:
+            return {"error": "No image data"}, 400
+
+        # Decode base64 image
+        header, encoded = image_data.split(",", 1)
+        nparr = np.frombuffer(base64.b64decode(encoded), np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
         h, w = frame.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0, (300, 300), (104, 177, 123))
         net.setInput(blob)
         detections = net.forward()
 
+        roi = None
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
             if confidence > 0.8:
@@ -150,36 +162,52 @@ def emotion_detect():
                 x1, y1, x2, y2 = box.astype("int")
                 roi = frame[y1:y2, x1:x2]
                 cv2.imwrite("static/face.jpg", roi)
-                found = True
                 break
 
-    cap.release()
+        if roi is None:
+            return {"error": "Face not detected. Please stay still and try again."}, 400
 
-    if roi is None:
-        flash("Face not detected. Please try again.", "danger")
-        return redirect(url_for('index'))
+        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        roi_resized = cv2.resize(gray, (48, 48))
+        roi_normalized = roi_resized / 255.0
+        roi_reshaped = np.reshape(roi_normalized, (1, 48, 48, 1))
 
-    gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-    roi_resized = cv2.resize(gray, (48, 48))
-    roi_normalized = roi_resized / 255.0
-    roi_reshaped = np.reshape(roi_normalized, (1, 48, 48, 1))
+        prediction = model.predict(roi_reshaped)
+        emotion = label_map[np.argmax(prediction)]
+        
+        link = f"https://www.youtube.com/results?search_query={info['singer']}+{emotion}+{info['language']}+song"
 
-    prediction = model.predict(roi_reshaped)
-    emotion = label_map[np.argmax(prediction)]
+        # Check if we need to ask for preference
+        ask_preference = emotion in ["sad", "anger"]
 
-    if emotion in ["sad", "anger"]:
-        return render_template("ask_music_preference.html", data=emotion)
+        return {
+            "success": True,
+            "emotion": emotion,
+            "link": link,
+            "ask_preference": ask_preference
+        }
 
-    link = f"https://www.youtube.com/results?search_query={info['singer']}+{emotion}+{info['language']}+song"
-    webbrowser.open(link)
-    return render_template("emotion_detect.html", data=emotion, link=link)
+    except Exception as e:
+        print(f"Error processing frame: {e}")
+        return {"error": str(e)}, 500
+
+@app.route('/results')
+def results():
+    emotion = request.args.get('emotion')
+    link = request.args.get('link')
+    ask = request.args.get('ask') == 'true'
+
+    if ask:
+        return render_template('ask_music_preference.html', data=emotion)
+    
+    return render_template('emotion_detect.html', data=emotion, link=link)
 
 @app.route('/recommend_music', methods=['POST'])
 def recommend_music():
     preference = request.form['preference']
-    link = f"https://www.youtube.com/results?search_query={info['singer']}+{preference}+{info['language']}+song"
-    webbrowser.open(link)
-    return render_template("music_recommendation.html", data=preference, link=link)
+    # Re-using the singer info which is stored in the global 'info' (or we could pass it in hidden fields)
+    link = f"https://www.youtube.com/results?search_query={info.get('singer', 'music')}+{preference}+{info.get('language', 'song')}+song"
+    return render_template("emotion_detect.html", data=preference, link=link)
 
 # -------------------- TRAINER TOOLS --------------------
 
