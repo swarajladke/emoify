@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Emoify - Choose Singer</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<div class="container animate-in">
+		<h1>Emoify</h1>
+
+		<div class="glass-card text-center">
+			{% if data == "punjabi" %}
+			<h2>Select Punjabi Singer</h2>
+			<form action="{{ url_for('emotion_detect') }}" method="POST">
+				<div class="language-grid">
+					<label class="language-option">
+						<input type="radio" name="singer" value="sidhu moosewala" checked />
+						<span>Sidhu Moosewala</span>
+					</label>
+					<label class="language-option">
+						<input type="radio" name="singer" value="amrinder gill" />
+						<span>Amrinder Gill</span>
+					</label>
+					<label class="language-option">
+						<input type="radio" name="singer" value="karan aujla" />
+						<span>Karan Aujla</span>
+					</label>
+					<label class="language-option">
+						<input type="radio" name="singer" value="diljit" />
+						<span>Diljit Dosanjh</span>
+					</label>
+				</div>
+				<button type="submit" class="btn-primary">Detect Emotion & Play</button>
+			</form>
+			{% elif data == "english" %}
+			<h2>Select English Singer</h2>
+			<form action="{{ url_for('emotion_detect') }}" method="POST">
+				<div class="language-grid">
+					<label class="language-option">
+						<input type="radio" name="singer" value="justin bieber" checked />
+						<span>Justin Bieber</span>
+					</label>
+					<label class="language-option">
+						<input type="radio" name="singer" value="shawn mendes" />
+						<span>Shawn Mendes</span>
+					</label>
+					<label class="language-option">
+						<input type="radio" name="singer" value="ed sheeran" />
+						<span>Ed Sheeran</span>
+					</label>
+					<label class="language-option">
+						<input type="radio" name="singer" value="harry styles" />
+						<span>Harry Styles</span>
+					</label>
+				</div>
+				<button type="submit" class="btn-primary">Detect Emotion & Play</button>
+			</form>
+			{% else %}
+			<h2>Choose Your Singer</h2>
+			<form action="{{ url_for('emotion_detect') }}" method="POST">
+				<div class="form-group">
+					<label>Type Singer Name</label>
+					<input type="text" name="singer" placeholder="e.g. Arijit Singh" required />
+				</div>
+				<button type="submit" class="btn-primary">Detect Emotion & Play</button>
+			</form>
+			{% endif %}
+
+			<div class="mt-4">
+				<a href="{{ url_for('index') }}" class="btn-outline">Back to Languages</a>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

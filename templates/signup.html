@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emoify - Create Account</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container animate-in">
+    <h1>Create Account</h1>
+
+    <div class="glass-card" style="max-width: 500px; margin: 0 auto;">
+      {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" style="color: #ef4444; margin-bottom: 20px;">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('signup') }}">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="••••••••" required />
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm_password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-primary mb-4">Start Listening</button>
+      </form>
+
+      <p class="text-center small-text">Already have an account? <a href="{{ url_for('login') }}"
+          style="color: var(--primary);">Sign In</a></p>
+    </div>
+  </div>
+</body>
+
+</html>

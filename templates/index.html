@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emoify - Home</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="nav-header">
+        <a href="{{ url_for('index') }}" class="nav-logo">Emoify</a>
+        <nav class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+            {% if session.get('trainer') %}
+            <a href="{{ url_for('trainer') }}" class="nav-link">Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container animate-in">
+        <h1>Feel the Beat.</h1>
+
+        <div class="glass-card text-center">
+            <div class="mb-8">
+                <h2>Choose Your Language</h2>
+                <p class="text-muted">Select the language that moves you today.</p>
+            </div>
+
+            <form action="{{ url_for('choose_singer') }}" method="POST">
+                <div class="language-grid">
+                    <label class="language-option">
+                        <input type="radio" name="language" value="punjabi" checked />
+                        <span>Punjabi</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="language" value="english" />
+                        <span>English</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="language" value="hindi" />
+                        <span>Hindi</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="language" value="western" />
+                        <span>Western</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="language" value="marathi" />
+                        <span>Marathi</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary">Continue to Singers</button>
+            </form>
+
+            <div class="divider"></div>
+            <p class="small-text text-muted">Are you a trainer? <a href="{{ url_for('login') }}"
+                    style="color: var(--primary); text-decoration: none; font-weight: 600;">Access Dashboard</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
