@@ -560,7 +560,9 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # MongoDB Setup
-client = MongoClient('mongodb+srv://swarajladke157_db_user:emoify@cluster0.eyynlls.mongodb.net/?appName=Cluster0')
+import os
+MONGO_URI = os.environ.get('MONGO_URI', 'mongodb+srv://swarajladke157_db_user:emoify@cluster0.eyynlls.mongodb.net/?appName=Cluster0')
+client = MongoClient(MONGO_URI)
 db = client.emoify
 users_col = db.users
 
