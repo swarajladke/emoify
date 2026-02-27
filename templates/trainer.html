@@ -1,35 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <title>Trainer Page - Emotion Pose Collector</title>
-    <!-- Optional: Bootstrap CSS CDN for styling -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emoify - Trainer Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
-<body class="container my-4">
 
-    <h1 class="mb-4">Emotion Trainer Page</h1>
+<body>
+    <div class="container animate-in">
+        <h1>Trainer Dashboard</h1>
 
-    <!-- Collect Data Form -->
-    <form method="POST" action="{{ url_for('collect_data') }}" class="mb-3">
-        <div class="mb-3">
-            <label for="emotion" class="form-label">Emotion:</label>
-            <input type="text" id="emotion" name="emotion" class="form-control" placeholder="Enter emotion" required />
+        <div class="glass-card">
+            <h2>System Controls</h2>
+            <p class="text-muted mb-4">Manage the emotion engine's dataset and neural network training.</p>
+
+            <!-- Collect Data Form -->
+            <form method="POST" action="{{ url_for('collect_data') }}" class="mb-4">
+                <div class="form-group">
+                    <label>Target Emotion</label>
+                    <input type="text" name="emotion" placeholder="e.g. focused, neutral, energetic" required />
+                </div>
+                <button type="submit" class="btn-primary">Initialize Data Collection</button>
+            </form>
+
+            <hr class="divider">
+
+            <!-- Train Model Form -->
+            <form method="POST" action="{{ url_for('train_model') }}">
+                <div class="mb-4">
+                    <p class="small-text text-muted">Warning: Training may take several minutes depending on the dataset
+                        size.</p>
+                </div>
+                <button type="submit" class="btn-outline" style="width: 100%; color: #10b981; border-color: #10b981;">🚀
+                    Start Model Retraining</button>
+            </form>
+
+            <!-- Message display -->
+            {% if message %}
+            <div class="mt-4 p-3"
+                style="background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 1px solid #10b981;">
+                <p class="small-text" style="color: #10b981; font-family: monospace; white-space: pre-wrap;">{{ message
+                    }}</p>
+            </div>
+            {% endif %}
+
+            <div class="mt-4 text-center">
+                <a href="{{ url_for('index') }}" class="btn-outline">Back to Player</a>
+                <a href="{{ url_for('logout') }}" class="btn-outline" style="margin-left: 10px;">Logout</a>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Collect Data</button>
-    </form>
-
-    <!-- Train Model Form -->
-    <form method="POST" action="{{ url_for('train_model') }}" class="mb-3">
-        <button type="submit" class="btn btn-success">Train Data</button>
-    </form>
-
-    <!-- Message display -->
-    {% if message %}
-    <div class="alert alert-info" role="alert">
-        <pre>{{ message }}</pre>
     </div>
-    {% endif %}
-
 </body>
+
 </html>

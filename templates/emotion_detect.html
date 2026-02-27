@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<title>detecting emotion</title>
-	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Emoify - Analysis</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+		rel="stylesheet">
 </head>
-<body style="background-color: #edffec;">
 
-	<div class="title">
-		<h1 class="display-4">you looks like {{data}}</h1>
-		<h1><a href="{{link}}" title="">go to here</a></h1>
+<body>
+	<header class="nav-header">
+		<a href="/" class="nav-logo">Emoify</a>
+		<nav class="nav-links">
+			<a href="/" class="nav-link">New Analysis</a>
+			<a href="/logout" class="nav-link">Logout</a>
+		</nav>
+	</header>
+
+	<div class="container animate-in text-center">
+		<p class="text-muted"
+			style="letter-spacing: 0.2em; font-weight: 700; text-transform: uppercase; font-size: 0.75rem;">Analysis
+			Complete</p>
+		<div class="emotion-result">You look {{data}}</div>
+
+		<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+			<img src="{{url_for('static', filename='face.jpg')}}" class="camera-preview" alt="Captured Face">
+
+			<div class="mt-8">
+				<p class="text-muted mb-4">We've curated a playlist that matches your current energy.</p>
+				<a href="{{link}}" class="btn-primary" target="_blank"
+					style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
+					Listen on YouTube
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M5 12h14" />
+						<path d="m12 5 7 7-7 7" />
+					</svg>
+				</a>
+			</div>
+
+			<div class="mt-8">
+				<a href="/index" class="btn-outline" style="width: 100%;">Scan Again</a>
+			</div>
+		</div>
 	</div>
-
-	<img src="{{url_for('static', filename='face.jpg')}}">	
-
 </body>
+
 </html>

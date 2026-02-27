@@ -1,20 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Your Music</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}">
-</head>
-<body>
-    <h1>Your detected emotion is: {{ data }}</h1>
-    <p>Would you like to listen to Sad or Happy music?</p>
-    <form action="/recommend_music" method="POST">
-        <button type="submit" name="preference" value="Sad">Sad Music</button>
-        <button type="submit" name="preference" value="Happy">Happy Music</button></br>
-        <button type="submit" name="preference" value="Angry">Angry Music</button>
-        <button type="submit" name="preference" value="Neutral">Neutral Music</button>
 
-    </form>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emoify - Music Preference</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modern.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container animate-in">
+        <h1>Music Vibe</h1>
+
+        <div class="glass-card text-center">
+            <p class="text-muted mb-2">Detected Emotion: <span style="color: white; font-weight: 600;">{{data}}</span>
+            </p>
+            <h2>How would you like to feel?</h2>
+            <p class="text-muted mb-4">We've detected a deep mood. Would you like to embrace it or shift the energy?</p>
+
+            <form action="/recommend_music" method="POST">
+                <div class="language-grid">
+                    <label class="language-option">
+                        <input type="radio" name="preference" value="Happy" checked />
+                        <span>Bring Joy (Happy)</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="preference" value="Neutral" />
+                        <span>Balanced (Neutral)</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="preference" value="Sad" />
+                        <span>Melancholic (Sad)</span>
+                    </label>
+                    <label class="language-option">
+                        <input type="radio" name="preference" value="Angry" />
+                        <span>Intense (Angry)</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary">Generate Playlist</button>
+            </form>
+
+            <div class="mt-4">
+                <a href="{{ url_for('index') }}" class="btn-outline">Cancel</a>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

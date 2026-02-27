@@ -310,7 +310,7 @@ app.secret_key = 'supersecretkey'
 s = URLSafeTimedSerializer(app.secret_key)
 
 # MongoDB
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://swarajladke157_db_user:emoify@cluster0.eyynlls.mongodb.net/?appName=Cluster0')
 db = client.emoify
 users_col = db.users
 trainers_col = db.trainers
@@ -510,7 +510,7 @@ if __name__ == '__main__':
 # app.secret_key = 'supersecretkey'
 
 # # MongoDB Connection
-# client = MongoClient('mongodb://localhost:27017/')
+# client = MongoClient('mongodb+srv://swarajladke157_db_user:emoify@cluster0.eyynlls.mongodb.net/?appName=Cluster0')
 # db = client.emoify
 # users_col = db.users
 # trainers_col = db.trainers
@@ -560,7 +560,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # MongoDB Setup
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://swarajladke157_db_user:emoify@cluster0.eyynlls.mongodb.net/?appName=Cluster0')
 db = client.emoify
 users_col = db.users
 
