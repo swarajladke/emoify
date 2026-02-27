@@ -1,0 +1,25 @@
+# General
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+.vscode/
+
+# Environment
+env/
+venv/
+ENV/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask/ML
+static/face.jpg
+model.h5
+res10_300x300_ssd_iter_140000.caffemodel
+deploy.prototxt.txt
+haarcascade_frontalface_default.xml
+
+# Git
+.git/

@@ -7,6 +7,10 @@ from keras.models import load_model
 import subprocess
 import webbrowser
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
